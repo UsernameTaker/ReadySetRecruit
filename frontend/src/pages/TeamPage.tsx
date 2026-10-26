@@ -65,7 +65,6 @@ export default function TeamPage() {
             <><dt>Website</dt><dd>
               <a href={team.websiteUrl} target="_blank" rel="noopener noreferrer">{team.websiteTitle || team.websiteUrl}</a>
               {team.websiteAutoFound && <span className="muted small"> (found automatically — not confirmed by the team)</span>}
-              {team.websiteStatus === 'UNREACHABLE' && <span className="muted small"> (site seems to be down)</span>}
             </dd></>
           )}
         </dl>
@@ -92,7 +91,7 @@ export default function TeamPage() {
         ) : team.websiteUrl ? (
           <>
             <h2>Interested?</h2>
-            <p>This team isn't taking applications on FreshFind. Check their website for how to join.</p>
+            <p>This team isn't taking applications on ReadySetRecruit. Check their website for how to join.</p>
             <a className="btn btn-primary" href={team.websiteUrl} target="_blank" rel="noopener noreferrer">Visit website</a>
           </>
         ) : (

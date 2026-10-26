@@ -1,8 +1,8 @@
-# Runs the website scraper once a day by calling the backend (and refreshes the team lists on Sundays).
-# Free hosts sleep when idle, so this also wakes the server up first.
+# Checks team websites once a day by calling the backend (and refreshes the team lists on Sundays).
+# Free hosts sleep when idle, so this wakes the server up first and keeps it awake until the job is done.
 # Repo settings -> Secrets and variables -> Actions:
-#   BACKEND_URL  e.g. https://freshfind-api.onrender.com
-#   CRON_TOKEN   same value as the backend's CRON_TOKEN env var
+#   BACKEND_URL  your Render address, e.g. https://freshfind-api.onrender.com
+#   CRON_TOKEN   same value as the backend's CRON_TOKEN env var on Render
 name: Nightly website scrape
 on:
   schedule:
@@ -11,18 +11,56 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BACKEND_URL: ${{ secrets.BACKEND_URL }}
+      CRON_TOKEN: ${{ secrets.CRON_TOKEN }}
     steps:
-      - name: Wake the server
+      - name: Check setup
+        id: setup
         run: |
-          for i in 1 2 3 4 5 6; do
-            if curl -fsS --max-time 60 "${{ secrets.BACKEND_URL }}/api/health"; then exit 0; fi
-            echo "waiting for server..."; sleep 20
+          if [ -z "$BACKEND_URL" ] || [ -z "$CRON_TOKEN" ]; then
+            echo "::notice::Skipping: add the BACKEND_URL and CRON_TOKEN secrets once the backend is deployed (see README)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Accept "https://x.onrender.com", "https://x.onrender.com/" or ".../api/health".
+          url="${BACKEND_URL%/}"; url="${url%/api/health}"; url="${url%/}"
+          echo "API=$url" >> "$GITHUB_ENV"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Wake the server
+        if: steps.setup.outputs.ready == 'true'
+        run: |
+          for i in $(seq 1 10); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 "$API/api/health" || true)
+            if [ "$code" = "200" ]; then echo "Server is up"; exit 0; fi
+            echo "Attempt $i: got HTTP $code, waiting..."; sleep 15
           done
+          echo "::error::The server never answered at BACKEND_URL/api/health. Check that the BACKEND_URL secret is your Render address (like https://freshfind-api.onrender.com)."
           exit 1
-      - name: Start scrape batch (Sundays - re-import the team lists first)
+
+      - name: Start the job (Sundays - re-import the team lists first)
+        if: steps.setup.outputs.ready == 'true'
         run: |
           job=scrape
           if [ "$(date -u +%u)" = "7" ]; then job=import; fi
-          curl -fsS -X POST --max-time 60 \
-            -H "X-Cron-Token: ${{ secrets.CRON_TOKEN }}" \
-            "${{ secrets.BACKEND_URL }}/api/cron/$job"
+          code=$(curl -s -o response.json -w "%{http_code}" -X POST --max-time 60 \
+            -H "X-Cron-Token: $CRON_TOKEN" "$API/api/cron/$job")
+          cat response.json; echo
+          if [ "$code" = "401" ]; then
+            echo "::error::Wrong CRON_TOKEN. Copy it again from Render (freshfind-api -> Environment) into the GitHub secret."
+            exit 1
+          fi
+          if [ "$code" != "200" ]; then echo "::error::Server answered HTTP $code"; exit 1; fi
+
+      - name: Wait for it to finish (keeps the server awake)
+        if: steps.setup.outputs.ready == 'true'
+        run: |
+          for i in $(seq 1 50); do
+            sleep 60
+            status=$(curl -s --max-time 60 -H "X-Cron-Token: $CRON_TOKEN" "$API/api/cron/status" || true)
+            echo "$status"
+            if echo "$status" | grep -q '"running":false'; then exit 0; fi
+          done
+          echo "Still running after 50 minutes; it will pick up where it left off next time."

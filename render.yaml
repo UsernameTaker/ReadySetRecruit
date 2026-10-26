@@ -1,6 +1,7 @@
 # Render Blueprint: New -> Blueprint -> pick this repo.
 services:
   - type: web
+    # Keep this name: Render matches the service by it, and renaming would create a new, empty service.
     name: freshfind-api
     runtime: docker
     plan: free
@@ -18,7 +19,7 @@ services:
         generateValue: true
       - key: CRON_TOKEN
         generateValue: true
-      - key: FRONTEND_ORIGIN     # e.g. https://freshfind.pages.dev
+      - key: FRONTEND_ORIGIN     # e.g. https://readysetrecruit.pages.dev
         sync: false
       - key: ADMIN_EMAILS        # your email, so your account becomes admin
         sync: false

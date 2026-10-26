@@ -9,7 +9,7 @@ RUN mvn -q -B -DskipTests package
 # ---- run ----
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=build /app/target/freshfind.jar app.jar
+COPY --from=build /app/target/readysetrecruit.jar app.jar
 # Tuned for small free-tier containers (~512 MB RAM).
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Xss512k -XX:TieredStopAtLevel=1"
 EXPOSE 8080

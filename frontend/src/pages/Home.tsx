@@ -41,25 +41,42 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, [params]);
 
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    if (!/^\d{5}$/.test(zip) && !q.trim()) { setError('Enter a 5-digit ZIP code (or search by name).'); return; }
+  const zipOk = /^\d{5}$/.test(zip);
+
+  function buildParams() {
     const p = new URLSearchParams();
-    if (zip) { p.set('zip', zip); p.set('radius', radius); }
+    if (zipOk) { p.set('zip', zip); p.set('radius', radius); }
     if (grade != null) p.set('grade', String(grade));
     if (program) p.set('program', program);
     if (type) p.set('type', type);
     if (openOnly) p.set('openApplications', 'true');
     if (q.trim()) p.set('q', q.trim());
-    setParams(p);
+    return p;
+  }
+
+  // Search again whenever a filter changes (short pause so typing a ZIP or name doesn't fire on every key).
+  useEffect(() => {
+    if (!zipOk && !q.trim()) return;
+    const timer = setTimeout(() => {
+      const p = buildParams();
+      if (p.toString() !== params.toString()) { setError(null); setParams(p, { replace: true }); }
+    }, 400);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zip, radius, grade, program, type, openOnly, q]);
+
+  function submit(e: FormEvent) {
+    e.preventDefault();
+    if (!zipOk && !q.trim()) { setError('Enter a 5-digit ZIP code (or search by name).'); return; }
+    setParams(buildParams());
   }
 
   return (
     <>
       <section className="hero">
         <div className="container">
-          <h1>Find a robotics team near you</h1>
-          <p className="lead">Community and school teams for FLL, FTC, FRC, VEX and more. Apply here, or go to the team's own website.</p>
+          <h1>Your next team starts here!</h1>
+          <p className="lead">Discover FIRST and VEX robotics teams near you. Find your fit, connect with a team, and take the first step toward joining the robotics community.</p>
           <form className="search card" onSubmit={submit}>
             <div className="search-row">
               <label className="field grow">
@@ -127,7 +144,7 @@ export default function Home() {
           <div className="how">
             <div className="card"><h3>Students</h3><p>Search by ZIP code (and grade if you want), compare teams, then apply here or visit the team's website.</p></div>
             <div className="card"><h3>Teams</h3><p>Create a free profile, build an application with your own questions and word limits, and review applicants.</p></div>
-            <div className="card"><h3>Teams not on FreshFind yet</h3><p>They're still listed from public FIRST team lists, with a link to their website when they have one.</p></div>
+            <div className="card"><h3>Teams not on ReadySetRecruit yet</h3><p>They're still listed from public FIRST team lists, with a link to their website when they have one.</p></div>
           </div>
         )}
       </section>

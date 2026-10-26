@@ -88,7 +88,8 @@ export default function TeamEditor() {
           <label className="field"><span>Oldest grade</span><GradeSelect value={t.maxGrade} onChange={g => set('maxGrade', g)} placeholder="Not specified" /></label>
         </div>
         <div className="two-col">
-          <label className="field"><span>Website</span><input value={t.websiteUrl} onChange={e => set('websiteUrl', e.target.value)} placeholder="yourteam.org" /></label>
+          <label className="field"><span>Website</span><input value={t.websiteUrl} onChange={e => set('websiteUrl', e.target.value)} placeholder="yourteam.org" />
+            <span className="small muted">We check that this opens when you save.</span></label>
           <label className="field"><span>Public contact email</span><input type="email" value={t.contactEmail} onChange={e => set('contactEmail', e.target.value)} /></label>
         </div>
         <label className="field"><span>When &amp; where you meet</span><input value={t.meetingInfo} onChange={e => set('meetingInfo', e.target.value)} /></label>

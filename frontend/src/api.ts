@@ -1,6 +1,6 @@
 // Small fetch wrapper. In dev, VITE_API_URL is empty and Vite proxies /api to Spring Boot.
 const BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
-const TOKEN_KEY = 'freshfind.token';
+const TOKEN_KEY = 'readysetrecruit.token';
 
 export class ApiError extends Error {
   constructor(public status: number, message: string) { super(message); }

@@ -7,7 +7,10 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="container navbar-inner">
-        <Link to="/" className="brand">FreshFind</Link>
+        <Link to="/" className="brand">
+          <img src="/logo.png" alt="" width={36} height={36} />
+          <span>Ready<span className="brand-accent">Set</span>Recruit</span>
+        </Link>
         <nav className="nav-links">
           <NavLink to="/" end>Find teams</NavLink>
           {user?.role === 'STUDENT' && <NavLink to="/my/applications">My applications</NavLink>}
