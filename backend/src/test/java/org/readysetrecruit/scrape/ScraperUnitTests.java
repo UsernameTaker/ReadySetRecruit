@@ -150,4 +150,25 @@ class ScraperUnitTests {
         assertTrue(ImportService.isDirectorySite("https://ftc-events.firstinspires.org/team/123"));
         assertFalse(ImportService.isDirectorySite("https://team254.com"));
     }
+
+    @Test
+    void readsRobotEventsTeams() throws Exception {
+        var page = new com.fasterxml.jackson.databind.ObjectMapper().readTree("""
+                {"meta":{"current_page":1,"last_page":1},"data":[
+                  {"number":"1234A","team_name":"Gear Grinders","organization":"Lincoln Middle School","grade":"Middle School",
+                   "program":{"id":41,"code":"VIQRC"},
+                   "location":{"city":"Austin","region":"Texas","postcode":"78701","country":"United States"}},
+                  {"number":"UCF","team_name":"College Bots","grade":"College","program":{"id":4},"location":{"country":"United States"}},
+                  {"number":"999X","team_name":"Abroad","grade":"High School","program":{"id":1},"location":{"country":"Canada"}}
+                ]}""");
+        var rows = ImportService.vexRows(page);
+        assertEquals(1, rows.size());
+        var r = rows.get(0);
+        assertEquals("VEX-1234A", r.externalKey());
+        assertEquals(java.util.Set.of("VEX IQ"), r.programs());
+        assertEquals(TeamType.SCHOOL, r.type());
+        assertEquals("TX", r.state());
+        assertEquals(6, r.minGrade());
+        assertEquals(8, r.maxGrade());
+    }
 }

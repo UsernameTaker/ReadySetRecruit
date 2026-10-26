@@ -12,7 +12,7 @@ public final class AuthDtos {
             @NotBlank @Size(min = 8, max = 100) String password,
             @NotBlank @Size(max = 100) String name,
             @NotNull Role role,
-            /** Student confirms they are 13+ or have a parent's permission. */
+            // student confirms they are 13+ or have a parent's permission
             boolean ageConfirmed) {}
 
     public record LoginRequest(@NotBlank String email, @NotBlank String password) {}

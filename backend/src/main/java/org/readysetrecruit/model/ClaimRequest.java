@@ -3,7 +3,7 @@ package org.readysetrecruit.model;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-/** A team account asking to take over an imported (unclaimed) team listing. Reviewed by an admin. */
+// a team account asking to take over an imported (unclaimed) team listing. Reviewed by an admin
 @Entity
 @Table(name = "claim_requests")
 public class ClaimRequest {

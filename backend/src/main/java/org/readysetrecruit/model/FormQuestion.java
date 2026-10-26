@@ -24,9 +24,9 @@ public class FormQuestion {
     private QuestionType type = QuestionType.LONG_TEXT;
 
     private boolean required = true;
-    /** Max words allowed in the answer. Null = no limit. */
+    // max words allowed in the answer. Null = no limit
     private Integer wordLimit;
-    /** Choices for MULTIPLE_CHOICE, one per line. */
+    // choices for MULTIPLE_CHOICE, one per line
     @Column(length = 2000)
     private String options;
 

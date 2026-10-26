@@ -17,11 +17,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Optional;
 
-/**
- * Turns US ZIP codes (and city/state pairs) into coordinates.
- * Checks the bundled GeoNames data first ({@link GeoData}); falls back to the free, key-less api.zippopotam.us
- * and caches those results in the zip_locations table, so each ZIP is only looked up once.
- */
+// zip code (or city + state) -> coordinates.
+// tries our own GeoNames data first (GeoData), and if it's not in there asks api.zippopotam.us (free, no key)
+// and saves the answer in the zip_locations table so we only ask once
 @Service
 public class ZipService {
     private static final Logger log = LoggerFactory.getLogger(ZipService.class);
@@ -63,7 +61,7 @@ public class ZipService {
         }
     }
 
-    /** Best-effort lookup of a city (used for importers that don't provide a ZIP). */
+    // for imports that only give us a city and no zip (FTC teams)
     public Optional<ZipLocation> lookupCity(String stateAbbrev, String city) {
         if (TextUtil.isBlank(stateAbbrev) || TextUtil.isBlank(city) || stateAbbrev.trim().length() != 2) return Optional.empty();
         Optional<GeoData.Place> bundled = geo.city(stateAbbrev, city);

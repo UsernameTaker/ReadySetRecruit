@@ -7,7 +7,7 @@ export function homeFor(role: string) {
   return role === 'STUDENT' ? '/' : role === 'ADMIN' ? '/admin' : '/manage';
 }
 
-/** Only follow same-site relative "next" links. */
+// only allow redirects to our own pages, otherwise someone could send people to a random site after login
 export function safeNext(next: string | null): string | null {
   return next && next.startsWith('/') && !next.startsWith('//') ? next : null;
 }

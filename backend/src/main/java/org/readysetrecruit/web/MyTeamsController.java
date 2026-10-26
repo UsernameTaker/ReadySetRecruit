@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** Endpoints for team accounts managing their own teams. */
 @RestController
 @RequestMapping("/api/my/teams")
 public class MyTeamsController {

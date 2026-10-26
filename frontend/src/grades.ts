@@ -23,7 +23,7 @@ export function gradeList(grades: number[]): string {
   return 'Grades ' + parts.join(', ');
 }
 
-/** Must match TextUtil.wordCount on the server. */
+// has to match TextUtil.wordCount on the backend or the limits won't agree
 export function countWords(s: string): number {
   const t = s.trim();
   return t ? t.split(/\s+/).length : 0;

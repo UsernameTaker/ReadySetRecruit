@@ -54,7 +54,7 @@ export default function TeamPage() {
 
         {team.description && <p className="pre">{team.description}</p>}
         {!team.description && team.websiteDescription && (
-          <blockquote className="from-site">“{team.websiteDescription}” <span className="muted small">— from their website</span></blockquote>
+          <blockquote className="from-site">“{team.websiteDescription}” <span className="muted small">(from their website)</span></blockquote>
         )}
 
         <dl className="facts">
@@ -64,7 +64,7 @@ export default function TeamPage() {
           {team.websiteUrl && (
             <><dt>Website</dt><dd>
               <a href={team.websiteUrl} target="_blank" rel="noopener noreferrer">{team.websiteTitle || team.websiteUrl}</a>
-              {team.websiteAutoFound && <span className="muted small"> (found automatically — not confirmed by the team)</span>}
+              {team.websiteAutoFound && <span className="muted small"> (we found this automatically, the team hasn't confirmed it)</span>}
             </dd></>
           )}
         </dl>
@@ -97,7 +97,7 @@ export default function TeamPage() {
         ) : (
           <>
             <h2>Interested?</h2>
-            <p>This team isn't taking applications right now{team.contactEmail ? ' — try emailing them.' : '.'}</p>
+            <p>This team isn't taking applications right now{team.contactEmail ? '. Try emailing them!' : '.'}</p>
           </>
         )}
       </div>

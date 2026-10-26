@@ -4,7 +4,7 @@ import { api } from '../api';
 import type { Form, Question, QuestionType } from '../types';
 import { ErrorBox, GradePicker } from '../components/Common';
 
-/** Questions get a local key so React can track them while they're added/moved/removed. */
+// react needs a key for each question so moving/deleting them doesn't mess up the inputs
 type Draft = Question & { key: string };
 
 const TYPE_LABEL: Record<QuestionType, string> = {
@@ -68,7 +68,7 @@ export default function FormBuilder() {
       });
       setForm(f);
       setQuestions(f.questions.map(q => ({ ...q, key: newKey() })));
-      setSaved(f.open ? 'Saved — your application is live.' : 'Saved. Turn on "Accepting applications" when you\'re ready.');
+      setSaved(f.open ? 'Saved! Your application is live.' : 'Saved. Turn on "Accepting applications" when you\'re ready.');
     } catch (e) { setError((e as Error).message); } finally {
       setBusy(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -92,6 +92,7 @@ Imports run **automatically** the first time the server starts (`AUTO_IMPORT=tru
 | **FTCScout** (FTC) | Nothing | Every US FTC team that played at an event this season or last (~6,500), with city and website |
 | **The Blue Alliance** (FRC) | Free API key from thebluealliance.com/account → `TBA_API_KEY` | All US FRC teams for the year, with ZIP, school and website |
 | **FIRST FTC Events API** (optional) | Free key from ftc-events.firstinspires.org/services/API → `FTC_API_USERNAME`, `FTC_API_TOKEN` | Used instead of FTCScout when set |
+| **RobotEvents** (VEX) | Free API key from events.vex.com/api/v2 (formerly robotevents.com) → Request Access → `ROBOTEVENTS_API_KEY` | All US VEX V5 and VEX IQ teams registered this season (VEX U college teams are skipped) |
 | **CSV** | Nothing | Anything else — VEX, FLL, local clubs, a school district's list |
 
 Teams are placed on the map using bundled [GeoNames](https://www.geonames.org) ZIP and city data (`backend/src/main/resources/geo/`, CC BY 4.0), so imports don't need a geocoding API. Whether a team is a "school" or "community" team is guessed from its organization name (e.g. "… High School" vs. "4-H Club"); teams can fix this after claiming their listing.

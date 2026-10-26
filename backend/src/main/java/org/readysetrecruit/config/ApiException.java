@@ -2,7 +2,7 @@ package org.readysetrecruit.config;
 
 import org.springframework.http.HttpStatus;
 
-/** Thrown from services; turned into a JSON error response by {@link GlobalExceptionHandler}. */
+// services throw this, GlobalExceptionHandler turns it into a json error
 public class ApiException extends RuntimeException {
     private final HttpStatus status;
 

@@ -3,10 +3,8 @@ package org.readysetrecruit.scrape;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Minimal robots.txt support: reads the rules for "User-agent: *" (or our own agent token)
- * and answers whether a path may be fetched. Longest matching rule wins, Allow beats Disallow on ties.
- */
+// Really basic robots.txt reader. Looks at the rules for "User-agent: *" (or our bot name if they list it)
+// and says if we're allowed to load a page. longest matching rule wins, Allow wins a tie
 public final class RobotsTxt {
     private record Rule(String prefix, boolean allow) {}
 
@@ -36,7 +34,7 @@ public final class RobotsTxt {
             }
             lastWasAgent = false;
             if (!key.equals("allow") && !key.equals("disallow")) continue;
-            if (key.equals("disallow") && value.isEmpty()) continue; // "Disallow:" = allow everything
+            if (key.equals("disallow") && value.isEmpty()) continue; // empty Disallow means everything's allowed
             Rule rule = new Rule(value.replace("*", ""), key.equals("allow"));
             for (String agent : currentAgents) {
                 if (agent.equals("*")) star.add(rule);

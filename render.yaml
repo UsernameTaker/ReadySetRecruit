@@ -27,5 +27,7 @@ services:
         value: "false"
       - key: TBA_API_KEY
         sync: false
+      - key: ROBOTEVENTS_API_KEY  # VEX teams
+        sync: false
       - key: BRAVE_API_KEY
         sync: false

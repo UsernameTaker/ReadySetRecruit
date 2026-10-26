@@ -21,14 +21,14 @@ public class FormService {
         this.teamService = teamService;
     }
 
-    /** Public view of a team's form (students can read questions before logging in). */
+    // public view of a team's form (students can read questions before logging in)
     @Transactional(readOnly = true)
     public FormDto publicForm(Long teamId) {
         return forms.findByTeamId(teamId).map(FormDto::of)
                 .orElseThrow(() -> ApiException.notFound("Application form"));
     }
 
-    /** The team's own form for editing; returns an empty, unsaved template if none exists yet. */
+    // the team's own form for editing; returns an empty, unsaved template if none exists yet
     @Transactional(readOnly = true)
     public FormDto formForEditing(User user, Long teamId) {
         Team t = teamService.requireManagedTeam(user, teamId);
@@ -55,7 +55,7 @@ public class FormService {
         if (req.open() && req.questions().isEmpty())
             throw ApiException.badRequest("Add at least one question before opening applications");
 
-        // Reconcile questions: keep ids for edited questions, add new ones, drop removed ones.
+        // match up the questions: edited ones keep their id, new ones get added, removed ones get deleted
         Map<Long, FormQuestion> existing = f.getQuestions().stream()
                 .filter(q -> q.getId() != null)
                 .collect(Collectors.toMap(FormQuestion::getId, Function.identity()));

@@ -78,7 +78,10 @@ public class AdminController {
         return started(jobs.start("import-ftc", () -> imports.importFtc(s)));
     }
 
-    /** Body: raw CSV text (Content-Type: text/csv or text/plain). */
+    @PostMapping("/jobs/import-vex")
+    public JobRunner.JobStatus importVex() { return started(jobs.start("import-vex", imports::importVex)); }
+
+    // body: raw CSV text (Content-Type: text/csv or text/plain)
     @PostMapping(value = "/jobs/import-csv", consumes = {"text/csv", "text/plain"})
     public JobRunner.JobStatus importCsv(@RequestBody String csv) {
         if (csv.length() > 5_000_000) throw ApiException.badRequest("CSV too large (5 MB max)");

@@ -38,7 +38,7 @@ public class JwtService {
                 .compact();
     }
 
-    /** Returns the user id if the token is valid. */
+    // returns the user id if the token is valid
     public Optional<Long> verify(String token) {
         try {
             Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();

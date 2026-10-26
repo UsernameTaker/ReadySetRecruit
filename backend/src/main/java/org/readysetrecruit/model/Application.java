@@ -29,7 +29,6 @@ public class Application {
     @OrderColumn(name = "idx")
     private List<Answer> answers = new ArrayList<>();
 
-    /** Private notes only the team can see. */
     @Column(length = 4000)
     private String teamNotes;
 

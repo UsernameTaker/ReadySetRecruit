@@ -49,7 +49,7 @@ public class PublicController {
     @GetMapping("/teams/{id}/form")
     public FormDto form(@PathVariable Long id) { return forms.publicForm(id); }
 
-    /** A team account asks to take over an imported listing. */
+    // a team account asks to take over an imported listing
     @PostMapping("/teams/{id}/claim")
     public Map<String, String> claim(@PathVariable Long id, @Valid @RequestBody ClaimCreate req) {
         teams.requestClaim(CurrentUser.get(), id, req.message());

@@ -22,7 +22,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    /** Student profile fields (optional). Grade: 0 = K, 1..12. */
+    // student profile fields (optional). Grade: 0 = K, 1..12
     private Integer grade;
     private String zip;
     private String parentEmail;

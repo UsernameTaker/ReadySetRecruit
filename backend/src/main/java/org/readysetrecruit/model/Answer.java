@@ -3,10 +3,8 @@ package org.readysetrecruit.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
-/**
- * One answer inside an application. The question prompt is copied in, so applications stay readable
- * even if the team later edits or deletes the question.
- */
+// one answer in an application. we copy the question text in here too, because if the team
+// edits or deletes the question later the old applications would stop making sense
 @Embeddable
 public class Answer {
     private Long questionId;

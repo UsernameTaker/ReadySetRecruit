@@ -17,7 +17,7 @@ public interface TeamRepository extends JpaRepository<Team, Long>, JpaSpecificat
     Optional<Team> findByExternalKey(String externalKey);
     long countByExternalKeyStartingWith(String prefix);
 
-    /** Teams with a website that hasn't been checked recently. */
+    // teams with a website that hasn't been checked recently
     @Query("""
             select t from Team t
             where t.websiteUrl is not null and t.websiteUrl <> ''
@@ -26,7 +26,7 @@ public interface TeamRepository extends JpaRepository<Team, Long>, JpaSpecificat
             """)
     List<Team> findDueForScrape(@Param("before") Instant before, Pageable page);
 
-    /** Unclaimed teams with no website that we haven't searched for recently. */
+    // unclaimed teams with no website that we haven't searched for recently
     @Query("""
             select t from Team t
             where (t.websiteUrl is null or t.websiteUrl = '') and t.owner is null

@@ -1,4 +1,4 @@
-/* Colors come from the logo: tan background, navy/blue people, orange pin. */
+/* colors are from the logo (tan bg, the navy/blue people, orange pin) */
 :root {
   --tan: #fef7ed;
   --tan-dark: #f3e8d6;
@@ -8,12 +8,12 @@
   --blue-light: #679ddd;
   --blue-wash: #e8f0fa;
   --orange: #f56248;
-  --orange-text: #c2412a; /* darker orange, readable as text */
+  --orange-text: #c2412a; /* the normal orange is too light for text */
   --orange-wash: #fdeae5;
   --text: #1d2a3d;
   --muted: #5e6878;
-  --line: #d9cdb9;       /* tan outline for inputs and dividers */
-  --card-line: #c5d1e3;  /* soft navy outline for cards */
+  --line: #d9cdb9; /* input borders, dividers */
+  --card-line: #c5d1e3; /* card borders */
   --green: #1f6b3a;
   --red: #b42318;
   --radius: 4px;
@@ -108,7 +108,7 @@ textarea { resize: vertical; }
 .alert-error { background: #fdf0ee; color: var(--red); border-color: var(--orange); }
 .alert-ok { background: #eef7f0; color: var(--green); border-color: #7fbf94; }
 
-/* search */
+/* search page */
 .hero { padding: 28px 0 8px; }
 .lead { color: var(--muted); max-width: 640px; }
 .search { margin-top: 16px; border-top: 3px solid var(--navy); }
@@ -186,7 +186,7 @@ textarea { resize: vertical; }
 .qe-tools { display: flex; gap: 6px; }
 .toggle-open { align-self: center; }
 
-/* review */
+/* reviewing applicants */
 .review-layout { display: grid; grid-template-columns: 280px 1fr; gap: 16px; align-items: start; }
 @media (max-width: 760px) { .review-layout { grid-template-columns: 1fr; } }
 .applicant-list { list-style: none; margin: 0; padding: 0; background: var(--paper); border: 1px solid var(--card-line); border-radius: var(--radius); overflow: hidden; }

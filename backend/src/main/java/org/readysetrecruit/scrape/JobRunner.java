@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** Runs one background job at a time (scrape or import) and remembers what happened last. */
+// runs one background job at a time (scrape or import) and remembers how the last one went
 @Component
 public class JobRunner {
     private static final Logger log = LoggerFactory.getLogger(JobRunner.class);
@@ -19,7 +19,7 @@ public class JobRunner {
     private final AtomicReference<JobStatus> status =
             new AtomicReference<>(new JobStatus(null, false, null, null, "No jobs have run yet"));
 
-    /** Starts the job on a new thread. Returns false if another job is already running. */
+    // starts it on a new thread. returns false if something's already running
     public synchronized boolean start(String name, Job job) {
         if (status.get().running()) return false;
         Instant started = Instant.now();

@@ -17,15 +17,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
 
-/**
- * Optional: for teams that don't list a website, asks a web search API for one and keeps the result
- * only if it clearly looks like the team's own site. Disabled unless BRAVE_API_KEY is set.
- * Results are marked "auto-found" in the UI until the team confirms them.
- */
+// Optional, only runs if BRAVE_API_KEY is set.
+// For teams with no website it searches the web and keeps a result only if it really looks like their site.
+// these show as "found automatically" on the team page until the team confirms it
 @Component
 public class WebsiteSearch {
     private static final Logger log = LoggerFactory.getLogger(WebsiteSearch.class);
-    /** Domains that are directories/social media, not a team's own site. */
+    // directories and social media, not the team's actual site
     private static final Set<String> SKIP_HOSTS = Set.of("thebluealliance.com", "firstinspires.org", "ftcscout.org",
             "frc-events.firstinspires.org", "ftc-events.firstinspires.org", "robotevents.com", "facebook.com",
             "instagram.com", "twitter.com", "x.com", "youtube.com", "linkedin.com", "wikipedia.org", "tiktok.com",
@@ -72,7 +70,7 @@ public class WebsiteSearch {
         return Optional.empty();
     }
 
-    /** Conservative match: the team number must appear, or (with no number) most words of the name. */
+    // pretty strict on purpose. team number has to show up, or if there's no number most of the name has to
     static boolean looksLikeTeam(Team team, String text) {
         if (team.getTeamNumber() != null && !team.getTeamNumber().isBlank()) {
             return text.matches("(?s).*\\b" + java.util.regex.Pattern.quote(team.getTeamNumber().trim()) + "\\b.*")
@@ -95,7 +93,7 @@ public class WebsiteSearch {
 
     private static String rootOf(String url) {
         URI u = URI.create(url);
-        // Keep the path for hosted sites (sites.google.com/view/team123); otherwise use the domain root.
+        // for google sites etc keep the full path (sites.google.com/view/team123), otherwise just the domain
         String host = u.getHost().toLowerCase(Locale.ROOT);
         if (host.startsWith("sites.google.com") || host.endsWith("wixsite.com") || host.endsWith("weebly.com")
                 || host.endsWith("github.io")) return url;

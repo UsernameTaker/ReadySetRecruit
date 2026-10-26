@@ -13,10 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
 
-/**
- * Called by the GitHub Actions schedule (.github/workflows/scrape.yml) with the shared CRON_TOKEN.
- * Free hosts put the server to sleep, so an external schedule is more reliable than @Scheduled.
- */
+// The github action (.github/workflows/scrape.yml) calls these with the CRON_TOKEN.
+// We can't just use @Scheduled for the nightly stuff because render puts the server to sleep.
 @RestController
 @RequestMapping("/api/cron")
 public class CronController {
@@ -40,14 +38,14 @@ public class CronController {
         return Map.of("started", started, "job", jobs.status());
     }
 
-    /** Lets the GitHub Action wait for the job (its requests also keep a free-tier server from sleeping). */
+    // the action polls this every minute until the job's done, which also keeps render awake
     @GetMapping("/status")
     public JobRunner.JobStatus status(@RequestHeader(value = "X-Cron-Token", required = false) String given) {
         checkToken(given);
         return jobs.status();
     }
 
-    /** Re-imports the team lists (new teams, changed websites), then checks a batch of websites. */
+    // sundays: re-import the team lists, then check websites
     @PostMapping("/import")
     public Map<String, Object> importTeams(@RequestHeader(value = "X-Cron-Token", required = false) String given) {
         checkToken(given);

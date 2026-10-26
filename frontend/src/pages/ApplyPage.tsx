@@ -112,7 +112,7 @@ export default function ApplyPage() {
                   )}
                   {q.type !== 'MULTIPLE_CHOICE' && (
                     <span className={`word-count ${over ? 'over' : ''}`}>
-                      {words}{q.wordLimit != null && ` / ${q.wordLimit}`} words{over && ' — over the limit'}
+                      {words}{q.wordLimit != null && ` / ${q.wordLimit}`} words{over && ' (over the limit!)'}
                     </span>
                   )}
                 </div>

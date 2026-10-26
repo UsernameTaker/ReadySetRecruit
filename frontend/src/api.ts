@@ -1,4 +1,5 @@
-// Small fetch wrapper. In dev, VITE_API_URL is empty and Vite proxies /api to Spring Boot.
+// wrapper around fetch for talking to the backend.
+// locally VITE_API_URL is empty and vite forwards /api to spring boot (see vite.config.ts)
 const BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 const TOKEN_KEY = 'readysetrecruit.token';
 

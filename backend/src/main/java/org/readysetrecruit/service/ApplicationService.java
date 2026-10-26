@@ -46,7 +46,7 @@ public class ApplicationService {
         return apps.findByTeamIdAndStudent(teamId, users.getReferenceById(student.getId())).map(ApplicationDto::forStudent);
     }
 
-    /** Save a draft, or submit when req.submit() is true. */
+    // save a draft, or submit when req.submit() is true
     @Transactional
     public ApplicationDto save(User student, Long teamId, ApplicationSave req) {
         ApplicationForm form = forms.findByTeamId(teamId)

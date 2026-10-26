@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-/** Converts US state names to 2-letter codes ("California" -> "CA"); passes codes through. */
+// "California" -> "CA". if it's already a code it just returns it
 public final class States {
     private static final Map<String, String> BY_NAME = new HashMap<>();
     static {

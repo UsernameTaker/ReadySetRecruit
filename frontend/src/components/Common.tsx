@@ -25,7 +25,6 @@ export function GradeSelect({ value, onChange, placeholder = 'Any grade', id }: 
   );
 }
 
-/** Toggle buttons to pick a set of grades. */
 export function GradePicker({ value, onChange }: { value: number[]; onChange: (g: number[]) => void }) {
   const toggle = (g: number) => onChange(value.includes(g) ? value.filter(x => x !== g) : [...value, g].sort((a, b) => a - b));
   const preset = (from: number, to: number) => onChange(GRADES.filter(g => g >= from && g <= to));

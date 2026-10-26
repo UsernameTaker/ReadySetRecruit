@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-/** The application a team builds. One form per team. */
+// the application a team builds. One form per team
 @Entity
 @Table(name = "application_forms")
 public class ApplicationForm {
@@ -22,12 +22,11 @@ public class ApplicationForm {
     @Column(length = 4000)
     private String intro;
 
-    /** Whether students can currently apply. */
     @Column(name = "is_open")
     private boolean open = false;
     private LocalDate deadline;
 
-    /** Grades allowed to apply (0 = K). Empty = all grades. */
+    // grades allowed to apply (0 = K). Empty = all grades
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "form_grades", joinColumns = @JoinColumn(name = "form_id"))
     @Column(name = "grade")

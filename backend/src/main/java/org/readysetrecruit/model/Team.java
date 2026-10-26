@@ -18,14 +18,14 @@ public class Team {
     @Column(nullable = false)
     private String name;
 
-    /** Official team number, e.g. FRC 254 / FTC 11115. Optional. */
+    // like 254 for FRC or 11115 for FTC. can be empty
     private String teamNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TeamType type = TeamType.COMMUNITY;
 
-    /** Programs the team competes in: FLL, FTC, FRC, VEX IQ, VRC, Other... */
+    // FTC, FRC, VEX IQ, etc. a team can do more than one
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "team_programs", joinColumns = @JoinColumn(name = "team_id"))
     @Column(name = "program")
@@ -46,7 +46,7 @@ public class Team {
     private String meetingInfo;
     private String costInfo;
 
-    /** Grade range the team accepts; 0 = K. Null = not specified. */
+    // 0 means kindergarten. null = they didn't say
     private Integer minGrade;
     private Integer maxGrade;
     private boolean recruiting = false;
@@ -57,18 +57,18 @@ public class Team {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TeamSource source = TeamSource.SELF;
-    /** Unique key for imported teams, e.g. "FRC-254" (lets imports upsert). */
+    // "FRC-254" etc, so re-importing updates the team instead of adding it twice
     private String externalKey;
 
-    // ---- scraper results ----
+    // stuff the website checker fills in
     @Enumerated(EnumType.STRING)
     private WebsiteStatus websiteStatus = WebsiteStatus.UNKNOWN;
-    /** True when the website was found by automated search and not confirmed by a human. */
+    // true if we found the site with search ourselves (team hasn't confirmed it)
     private boolean websiteAutoFound = false;
     private String websiteTitle;
     @Column(length = 1000)
     private String websiteDescription;
-    /** A "join us / apply / recruiting" link found on the team's own website. */
+    // a "join us" / "apply" link we found on their site
     private String joinUrl;
     private int scrapeFailures = 0;
     private Instant lastScrapedAt;
@@ -82,7 +82,7 @@ public class Team {
 
     public boolean isClaimed() { return owner != null; }
 
-    /** What students see: only websites that have been checked and actually open. */
+    // students only see the website once we checked it and it actually works
     public String getVisibleWebsiteUrl() {
         return websiteStatus == WebsiteStatus.OK || websiteStatus == WebsiteStatus.BLOCKED_BY_ROBOTS ? websiteUrl : null;
     }

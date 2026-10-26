@@ -14,13 +14,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
-/**
- * Offline US geocoding from bundled GeoNames data (CC BY 4.0, geonames.org):
- *  - geo/us-zips.tsv.gz:   zip, lat, lng, place name, state
- *  - geo/us-cities.tsv.gz: state, city, lat, lng, ascii name (towns with 500+ people, catches suburbs that
- *    aren't postal place names)
- * Lets imports place thousands of teams without calling a web API for each one.
- */
+// ZIP code / city -> lat and lng, using GeoNames data we put in resources/geo (free, CC BY 4.0, geonames.org)
+//   us-zips.tsv.gz    zip  lat  lng  place  state
+//   us-cities.tsv.gz  state  city  lat  lng  ascii name   (towns 500+ people, for suburbs like Eagan MN that
+//                     aren't a "postal" city name)
+// before this we called an api for every single team and it took forever
 @Component
 public class GeoData {
     private static final Logger log = LoggerFactory.getLogger(GeoData.class);
@@ -49,7 +47,7 @@ public class GeoData {
             read("geo/us-zips.tsv.gz", p -> {
                 Place place = new Place(p[0], Double.parseDouble(p[1]), Double.parseDouble(p[2]), p[3], p[4]);
                 zips.put(place.zip(), place);
-                cities.putIfAbsent(key(place.state(), place.city()), place); // first ZIP of a postal city
+                cities.putIfAbsent(key(place.state(), place.city()), place); // just use the first zip we see for a city
             });
             read("geo/us-cities.tsv.gz", p -> {
                 Place place = new Place(null, Double.parseDouble(p[2]), Double.parseDouble(p[3]), p[1], p[0]);
@@ -76,7 +74,7 @@ public class GeoData {
         }
     }
 
-    /** "St. Louis, MO" / "saint louis" / "Ft Worth" -> comparable keys. */
+    // makes city names match even when they're written differently, like "St. Louis" vs "Saint Louis"
     static String key(String state, String city) {
         String c = city.toLowerCase(Locale.ROOT).trim()
                 .replaceFirst(",\\s*[a-z]{2}$", "")            // "Galesville, WI"

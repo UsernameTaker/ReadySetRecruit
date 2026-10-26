@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** Endpoints for students' own applications. */
 @RestController
 @RequestMapping("/api/applications")
 public class StudentApplicationsController {
@@ -25,7 +24,7 @@ public class StudentApplicationsController {
         return apps.mineForTeam(CurrentUser.get(), teamId).orElseThrow(() -> ApiException.notFound("Application"));
     }
 
-    /** Save a draft ({"submit": false}) or submit ({"submit": true}). */
+    // send {"submit": false} to save a draft, true to actually submit
     @PutMapping("/team/{teamId}")
     public ApplicationDto save(@PathVariable Long teamId, @Valid @RequestBody ApplicationSave req) {
         return apps.save(CurrentUser.get(), teamId, req);

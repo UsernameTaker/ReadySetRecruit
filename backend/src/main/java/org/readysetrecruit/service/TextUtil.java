@@ -3,7 +3,7 @@ package org.readysetrecruit.service;
 public final class TextUtil {
     private TextUtil() {}
 
-    /** Word count used for word limits. Must match the frontend's countWords(). */
+    // word count for the word limits. KEEP THIS THE SAME as countWords() in the frontend!!
     public static int wordCount(String s) {
         if (s == null) return 0;
         String t = s.trim();
@@ -18,7 +18,7 @@ public final class TextUtil {
         return t.isEmpty() ? null : t;
     }
 
-    /** Adds https:// to bare domains like "team123.org". Returns null for blank input. */
+    // team123.org -> https://team123.org (null if empty)
     public static String normalizeUrl(String url) {
         String u = trimToNull(url);
         if (u == null) return null;

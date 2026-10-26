@@ -48,7 +48,6 @@ public class TeamService {
         this.verifyWebsites = verifyWebsites;
     }
 
-    /** Search filters. Every field is optional. */
     public record SearchParams(String zip, Integer radiusMiles, Integer grade, String program, TeamType type,
                                Boolean recruitingOnly, Boolean openApplicationsOnly, String state, String q) {}
 
@@ -64,7 +63,7 @@ public class TeamService {
         Specification<Team> spec = (root, query, cb) -> {
             List<Predicate> preds = new ArrayList<>();
             if (o != null) {
-                // Cheap bounding box first; exact distance is computed below.
+                // rough box around the zip first (fast in the db), exact miles get calculated after
                 double dLat = radius / 69.0;
                 double dLng = radius / (69.0 * Math.max(0.2, Math.cos(Math.toRadians(o.getLatitude()))));
                 preds.add(cb.between(root.get("latitude"), o.getLatitude() - dLat, o.getLatitude() + dLat));
@@ -131,7 +130,7 @@ public class TeamService {
         return toDetail(t, false);
     }
 
-    /** Team owners see their website as entered; everyone else only sees it if it works. */
+    // owners see whatever they typed in, everyone else only sees the website if it works
     TeamDetail toDetail(Team t) { return toDetail(t, true); }
 
     TeamDetail toDetail(Team t, boolean forOwner) {
@@ -199,7 +198,7 @@ public class TeamService {
             t.setJoinUrl(null);
             t.setScrapeFailures(0);
             if (newUrl != null && verifyWebsites) {
-                // Check it right away so a typo or dead site never shows up on the team's page.
+                // check it right now so a typo or dead link never ends up on their page
                 WebsiteScraper.Result check = scraper.scrape(newUrl);
                 if (!check.opensForPeople())
                     throw ApiException.badRequest("We couldn't open " + newUrl
@@ -223,7 +222,7 @@ public class TeamService {
         if (!TextUtil.isBlank(r.state())) t.setState(r.state().trim().toUpperCase());
     }
 
-    /** The team must belong to the user (admins can manage every team). */
+    // make sure this user actually runs this team (admins can edit any team)
     public Team requireManagedTeam(User user, Long teamId) {
         Team t = teams.findById(teamId).orElseThrow(() -> ApiException.notFound("Team"));
         boolean owner = t.getOwner() != null && t.getOwner().getId().equals(user.getId());
@@ -265,7 +264,7 @@ public class TeamService {
         if (t.isClaimed()) throw ApiException.conflict("Team already claimed");
         t.setOwner(c.getUser());
         c.setStatus(ClaimStatus.APPROVED);
-        // Reject any competing claims for the same team.
+        // if other people also tried to claim this team, reject theirs
         claims.findByTeamAndStatus(t, ClaimStatus.PENDING).stream()
                 .filter(other -> !other.getId().equals(c.getId()))
                 .forEach(other -> other.setStatus(ClaimStatus.REJECTED));

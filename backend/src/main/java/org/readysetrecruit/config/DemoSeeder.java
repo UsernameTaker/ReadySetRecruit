@@ -16,10 +16,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Fills an empty database with demo data so you can click around locally.
- * Logins: team@demo.org / student@demo.org, password "password123". Disable with SEED_DEMO=false.
- */
+// fake teams + accounts so there's something to click on when you run it locally
+// logins: team@demo.org and student@demo.org, password is password123
+// turned off on render with SEED_DEMO=false
 @Component
 @Order(1)
 public class DemoSeeder implements ApplicationRunner {
@@ -48,7 +47,7 @@ public class DemoSeeder implements ApplicationRunner {
         if (!enabled || teams.count() > 0) return;
         log.info("Seeding demo data (SEED_DEMO=true)");
 
-        // Pre-cache a few ZIPs so the demo works offline.
+        // save a few zips so the demo works without internet
         zips.saveAll(List.of(
                 new ZipLocation("94040", 37.3855, -122.0881, "Mountain View", "CA"),
                 new ZipLocation("94301", 37.4443, -122.1598, "Palo Alto", "CA"),

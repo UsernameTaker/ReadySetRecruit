@@ -19,12 +19,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The website pipeline, run in small batches (so it fits a free-tier server):
- *  1. For unclaimed teams with no website: optionally search the web for one.
- *  2. For teams with a website: check it's up, grab title/description, find a join/apply link and contact email.
- * Teams that never set up a ReadySetRecruit profile still get a useful card with a link to their own site.
- */
+// Goes through team websites in batches.
+// 1) teams with no website -> try to find one with a web search (only if BRAVE_API_KEY is set)
+// 2) teams with a website -> check if it works, grab the title/description, a join link and an email
+// this is how teams that never signed up still get a useful card
 @Service
 public class ScrapeService {
     private static final Logger log = LoggerFactory.getLogger(ScrapeService.class);
@@ -57,10 +55,8 @@ public class ScrapeService {
 
     public String runBatch() throws InterruptedException { return batch().summary(); }
 
-    /**
-     * Keeps checking batches until every website is up to date or the time budget runs out.
-     * The nightly GitHub Action uses this (and keeps the free server awake while it runs).
-     */
+    // keeps doing batches until everything's checked or we run out of time.
+    // the nightly github action calls this (and pings the server so render doesn't fall asleep)
     public String runUntilDone(Duration budget) throws InterruptedException {
         Instant stop = Instant.now().plus(budget);
         int batches = 0, checked = 0;
@@ -104,7 +100,7 @@ public class ScrapeService {
 
         List<Long> due = tx.execute(s -> teams.findDueForScrape(cutoff, PageRequest.of(0, batchSize))
                 .stream().map(Team::getId).toList());
-        // Every team is a different website, so a few are checked at once; each thread still pauses between sites.
+        // check a few at once since they're all different websites anyway (each thread still waits a bit between sites)
         AtomicInteger ok = new AtomicInteger(), failed = new AtomicInteger(), joinLinks = new AtomicInteger();
         ExecutorService pool = Executors.newFixedThreadPool(threads);
         for (Long id : due) {
@@ -117,7 +113,7 @@ public class ScrapeService {
                     (r.opensForPeople() ? ok : failed).incrementAndGet();
                     if (r.joinUrl() != null) joinLinks.incrementAndGet();
                 } catch (Exception e) {
-                    // Mark it checked anyway so one odd site can't block every future batch.
+                    // still mark it as checked or this one site gets retried forever
                     log.warn("Scraping team {} failed: {}", id, e.toString());
                     failed.incrementAndGet();
                     tx.executeWithoutResult(s -> teams.findById(id).ifPresent(t -> t.setLastScrapedAt(Instant.now())));
@@ -134,24 +130,24 @@ public class ScrapeService {
         return new Batch(due.size() + searched, summary);
     }
 
-    /** Stores what a website check found. Unreachable sites are hidden right away and rechecked later. */
+    // save what we found. dead sites get hidden right away, we check them again in 2 weeks
     public static void apply(Team t, WebsiteScraper.Result r) {
         t.setLastScrapedAt(Instant.now());
         if (r.blockedByRobots()) {
             t.setScrapeFailures(0);
             t.setWebsiteStatus(WebsiteStatus.BLOCKED_BY_ROBOTS);
-            return; // we still show the link, we just don't read the site
+            return; // still show the link, we just can't read the site
         }
         if (r.botBlocked()) {
             t.setScrapeFailures(0);
-            t.setWebsiteStatus(WebsiteStatus.OK); // works in a browser, it just won't talk to us
+            t.setWebsiteStatus(WebsiteStatus.OK); // site works for people, it just blocks bots like us
             return;
         }
         if (!r.reachable()) {
             t.setScrapeFailures(t.getScrapeFailures() + 1);
             t.setWebsiteStatus(WebsiteStatus.UNREACHABLE);
             t.setJoinUrl(null);
-            // An auto-found site that keeps failing was probably wrong; drop it.
+            // if we found this site ourselves and it keeps failing it was probably the wrong site
             if (t.isWebsiteAutoFound() && t.getScrapeFailures() >= 3) {
                 t.setWebsiteUrl(null);
                 t.setWebsiteAutoFound(false);

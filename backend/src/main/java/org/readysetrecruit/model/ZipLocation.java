@@ -4,7 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/** Cached ZIP code centroid (looked up once from a free geocoding API, then stored). */
+// cached ZIP code centroid (looked up once from a free geocoding API, then stored)
 @Entity
 @Table(name = "zip_locations")
 public class ZipLocation {

@@ -23,14 +23,14 @@ export default function Home() {
 
   useEffect(() => { api<string[]>('/api/meta/programs').then(setPrograms).catch(() => {}); }, []);
 
-  // Prefill from the student's profile the first time.
+  // fill in zip/grade from the student's profile if they're logged in
   useEffect(() => {
     if (user && !params.get('zip') && !zip && user.zip) setZip(user.zip);
     if (user && !params.get('grade') && grade == null && user.grade != null) setGrade(user.grade);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-  // Run the search whenever the URL query changes (so results are shareable/bookmarkable).
+  // the search lives in the url (?zip=...) so you can share/bookmark results. search whenever it changes
   useEffect(() => {
     if (!params.get('zip') && !params.get('q')) { setResults(null); return; }
     setLoading(true);
@@ -54,7 +54,7 @@ export default function Home() {
     return p;
   }
 
-  // Search again whenever a filter changes (short pause so typing a ZIP or name doesn't fire on every key).
+  // re-search when any filter changes. waits 400ms so typing a zip doesn't search on every key
   useEffect(() => {
     if (!zipOk && !q.trim()) return;
     const timer = setTimeout(() => {

@@ -28,12 +28,12 @@ public final class ApplicationDtos {
             List<AnswerDto> answers, Instant createdAt, Instant updatedAt, Instant submittedAt,
             String studentName, String studentEmail, String teamNotes) {
 
-        /** View for the student: hides the team's private notes. */
+        // view for the student: hides the team's private notes
         public static ApplicationDto forStudent(Application a) {
             return build(a, null);
         }
 
-        /** View for the team: includes private notes. */
+        // view for the team: includes private notes
         public static ApplicationDto forTeam(Application a) {
             return build(a, a.getTeamNotes());
         }

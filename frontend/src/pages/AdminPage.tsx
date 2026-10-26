@@ -22,7 +22,7 @@ export default function AdminPage() {
   async function run(label: string, fn: () => Promise<unknown>) {
     setError(null);
     setNotice(null);
-    try { await fn(); setNotice(`${label} started — refresh in a bit to see the result.`); load(); }
+    try { await fn(); setNotice(`${label} started. Refresh in a bit to see how it went`); load(); }
     catch (e) { setError((e as Error).message); }
   }
 
@@ -70,6 +70,7 @@ export default function AdminPage() {
           <button className="btn btn-secondary" onClick={() => run('Website check', () => api('/api/admin/jobs/scrape', { method: 'POST' }))}>Run website scraper</button>
           <button className="btn btn-secondary" onClick={() => run('FRC import', () => api('/api/admin/jobs/import-frc', { method: 'POST' }))}>Import FRC teams (TBA)</button>
           <button className="btn btn-secondary" onClick={() => run('FTC import', () => api('/api/admin/jobs/import-ftc', { method: 'POST' }))}>Import FTC teams (FTCScout)</button>
+          <button className="btn btn-secondary" onClick={() => run('VEX import', () => api('/api/admin/jobs/import-vex', { method: 'POST' }))}>Import VEX teams (RobotEvents)</button>
           <button className="btn btn-ghost" onClick={load}>Refresh</button>
         </div>
         <h3>Import from CSV</h3>
